@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Beatriz Lima">
+<meta name="author" content="Lohã Barbosa">
+
+<title>Analisando a influência do genótipos de pepinos: Uma aplicação de design de quadrados latinos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="cucumber_genotype_latin_square_design_files/libs/clipboard/clipboard.min.js"></script>
+<script src="cucumber_genotype_latin_square_design_files/libs/quarto-html/quarto.js"></script>
+<script src="cucumber_genotype_latin_square_design_files/libs/quarto-html/popper.min.js"></script>
+<script src="cucumber_genotype_latin_square_design_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="cucumber_genotype_latin_square_design_files/libs/quarto-html/anchor.min.js"></script>
+<link href="cucumber_genotype_latin_square_design_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="cucumber_genotype_latin_square_design_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="cucumber_genotype_latin_square_design_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="cucumber_genotype_latin_square_design_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="cucumber_genotype_latin_square_design_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+
+<script src="cucumber_genotype_latin_square_design_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="cucumber_genotype_latin_square_design_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-full toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Índice</h2>
+   
+  <ul class="collapse">
+  <li><a href="#introdução" id="toc-introdução" class="nav-link active" data-scroll-target="#introdução">Introdução</a></li>
+  <li><a href="#o-modelo" id="toc-o-modelo" class="nav-link" data-scroll-target="#o-modelo">O Modelo</a></li>
+  <li><a href="#anova" id="toc-anova" class="nav-link" data-scroll-target="#anova">Anova</a></li>
+  <li><a href="#pressupostos" id="toc-pressupostos" class="nav-link" data-scroll-target="#pressupostos">Pressupostos</a></li>
+  <li><a href="#pacotes-utilizados" id="toc-pacotes-utilizados" class="nav-link" data-scroll-target="#pacotes-utilizados">Pacotes utilizados</a></li>
+  <li><a href="#dados" id="toc-dados" class="nav-link" data-scroll-target="#dados">Dados</a></li>
+  <li><a href="#análise-exploratória-dos-dados" id="toc-análise-exploratória-dos-dados" class="nav-link" data-scroll-target="#análise-exploratória-dos-dados">Análise exploratória dos dados</a></li>
+  <li><a href="#aplicação-da-anova-no-design-de-clensom" id="toc-aplicação-da-anova-no-design-de-clensom" class="nav-link" data-scroll-target="#aplicação-da-anova-no-design-de-clensom">Aplicação da Anova no design de Clensom</a></li>
+  <li><a href="#aplicação-da-anova-no-design-de-tipton" id="toc-aplicação-da-anova-no-design-de-tipton" class="nav-link" data-scroll-target="#aplicação-da-anova-no-design-de-tipton">Aplicação da Anova no design de Tipton</a></li>
+  <li><a href="#aplicação-da-anova-nos-dados-conjuntos" id="toc-aplicação-da-anova-nos-dados-conjuntos" class="nav-link" data-scroll-target="#aplicação-da-anova-nos-dados-conjuntos">Aplicação da Anova nos dados conjuntos</a></li>
+  <li><a href="#conclusões" id="toc-conclusões" class="nav-link" data-scroll-target="#conclusões">Conclusões</a></li>
+  </ul>
+</nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analisando a influência do genótipos de pepinos: Uma aplicação de design de quadrados latinos</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Beatriz Lima </p>
+             <p>Lohã Barbosa </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introdução" class="level2">
+<h2 class="anchored" data-anchor-id="introdução">Introdução</h2>
+<p>Esse projeto analisa um conjunto de dados públicos provenientes de um experimento agrícola realizado em 1985 em duas localidades: a Universidade de Clemson, na Carolina do Sul, e Tifton, na Geórgia. O experimento seguiu um desenho em Quadrado Latino e foi aplicado em mais de uma localidade. Esse tipo de configuração permite considerar as diferenças ambientais que podem impactar os resultados, proporcionando análises estatísticas mais precisas e quantificando os efeitos desses ambientes.</p>
+<p>O Design em Quadrado Latino é uma técnica utilizada para controlar variações conhecidas ou desconhecidas em um campo experimental, como, por exemplo, diferenças na condição do solo, proximidade com estradas ou posição em relação ao sol. Ele organiza os tratamentos de forma equilibrada para reduzir o impacto dessas variações.</p>
+<p>Neste projeto, os dados serão analisados de duas formas:</p>
+<ul>
+<li><strong>Análise separada por localidade:</strong> cada local será tratado como um experimento independente para demonstrar como analisar dados de um Quadrado Latino.</li>
+<li><strong>Análise conjunta das localidades:</strong> os dados de ambas as localidades serão analisados juntos, considerando os efeitos ambientais e aleatórios.</li>
+</ul>
+</section>
+<section id="o-modelo" class="level2">
+<h2 class="anchored" data-anchor-id="o-modelo">O Modelo</h2>
+<p>A fórmula para o modelo de Quadrado Latino pode ser escrita da seguinte forma:</p>
+<p><span class="math display">\[Y_{ijk} = \mu + \tau_i + \beta_j + \alpha_k + \epsilon_{ijk}\]</span></p>
+<p>Onde:</p>
+<ul>
+<li><span class="math inline">\(\mu\)</span> = Média Geral</li>
+<li><span class="math inline">\(\tau_i\)</span> = Efeito do Tratamento</li>
+<li><span class="math inline">\(\beta_j\)</span> = Efeito do Bloco-1</li>
+<li><span class="math inline">\(\alpha_k\)</span> = Efeito do Bloco-2</li>
+<li><span class="math inline">\(\epsilon_{ijk}\)</span> = Erro Aleatório</li>
+</ul>
+<p>Onde:</p>
+<ul>
+<li>i = Número de tratamentos</li>
+<li>j = Número de blocos-1</li>
+<li>k = Número de blocos-2</li>
+</ul>
+</section>
+<section id="anova" class="level2">
+<h2 class="anchored" data-anchor-id="anova">Anova</h2>
+<p>Para avaliar a variabilidade nos dados foi aplicado Anova. No contexto de experimentos agrícolas ou biológicos, como o delineamento em quadrados latinos, a ANOVA é particularmente útil porque permite avaliar o efeito de tratamentos (como genótipos de plantas) enquanto controla a variabilidade em duas direções diferentes: linhas e colunas. Essa estrutura elimina possíveis vieses associados à heterogeneidade ambiental que poderiam interferir nos resultados, como variações no solo ou na luminosidade.</p>
+<p>No caso de um delineamento de quadrados latinos aplicado ao rendimento de diferentes genótipos de pepinos em duas localizações, a ANOVA ajuda a responder perguntas importantes, como:</p>
+<ul>
+<li><em>Os genótipos diferem significativamente em termos de rendimento médio?</em></li>
+<li><em>As variações entre linhas e colunas influenciam os resultados?</em></li>
+<li><em>O erro experimental está devidamente controlado?</em></li>
+</ul>
+</section>
+<section id="pressupostos" class="level2">
+<h2 class="anchored" data-anchor-id="pressupostos">Pressupostos</h2>
+<section id="variação-aleatória" class="level3">
+<h3 class="anchored" data-anchor-id="variação-aleatória">1. <strong>Variação Aleatória</strong></h3>
+<ul>
+<li>Os tratamentos são atribuídos aleatoriamente em linhas e colunas, mas de forma balanceada.</li>
+<li><span class="math inline">\(\sum_{i=1}^{n} \tau_i = 0\)</span> (soma dos efeitos dos tratamentos é zero).</li>
+</ul>
+</section>
+<section id="independência-dos-erros" class="level3">
+<h3 class="anchored" data-anchor-id="independência-dos-erros">2. <strong>Independência dos Erros</strong></h3>
+<ul>
+<li>Os erros <span class="math inline">\(\epsilon_{ijk}\)</span> devem ser independentes entre si.</li>
+<li><span class="math inline">\(\text{Cov}(\epsilon_{ijk}, \epsilon_{i'j'k'}) = 0\)</span> para <span class="math inline">\((i,j,k) \neq (i',j',k')\)</span>.</li>
+</ul>
+</section>
+<section id="normalidade-dos-erros" class="level3">
+<h3 class="anchored" data-anchor-id="normalidade-dos-erros">3. <strong>Normalidade dos Erros</strong></h3>
+<ul>
+<li>Os erros são normalmente distribuídos com média zero e variância constante.</li>
+<li><span class="math inline">\(\epsilon_{ijk} \sim N(0, \sigma^2)\)</span>, onde <span class="math inline">\(\sigma^2\)</span> é a variância.</li>
+</ul>
+</section>
+<section id="homogeneidade-de-variâncias-homoscedasticidade" class="level3">
+<h3 class="anchored" data-anchor-id="homogeneidade-de-variâncias-homoscedasticidade">4. <strong>Homogeneidade de Variâncias (Homoscedasticidade)</strong></h3>
+<ul>
+<li>A variância dos erros é constante em todos os tratamentos, linhas e colunas.</li>
+<li><span class="math inline">\(\text{Var}(\epsilon_{ijk}) = \sigma^2\)</span> para todos os <span class="math inline">\(i, j, k\)</span>.</li>
+</ul>
+</section>
+</section>
+<section id="pacotes-utilizados" class="level2">
+<h2 class="anchored" data-anchor-id="pacotes-utilizados">Pacotes utilizados</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agridat) <span class="co"># banco de dados</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># manipulação de dados</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra) <span class="co"># tabelas</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># criação de gráficos</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(desplot) <span class="co"># criação de gráficos</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer) <span class="co"># estética dos gráficos</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)      <span class="co"># teste de homogeneidade</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nortest)  <span class="co"># teste de normalidade</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)  <span class="co"># gráfico de residuos</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="dados" class="level2">
+<h2 class="anchored" data-anchor-id="dados">Dados</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> agridat<span class="sc">::</span>bridges.cucumber</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   32 obs. of  5 variables:
+ $ loc  : Factor w/ 2 levels "Clemson","Tifton": 1 1 1 1 1 1 1 1 1 1 ...
+ $ gen  : Factor w/ 4 levels "Dasher","Guardian",..: 1 1 1 1 2 2 2 2 3 3 ...
+ $ row  : int  1 2 3 4 1 2 3 4 1 2 ...
+ $ col  : int  3 4 2 1 4 2 1 3 1 3 ...
+ $ yield: num  44.2 54.1 47.2 36.7 33 13.6 44.1 35.8 11.5 22.4 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="análise-exploratória-dos-dados" class="level2">
+<h2 class="anchored" data-anchor-id="análise-exploratória-dos-dados">Análise exploratória dos dados</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-hover table-striped table-bordered table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Variável</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Desçrição</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">loc</td>
+<td style="text-align: left;">As duas localidades envolvidas nesta pesquisa são Clemson e Tifton.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gen</td>
+<td style="text-align: left;">Os quatro genótipos de pepino: Dasher, Guardian, Sprint, Poinsett.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">row</td>
+<td style="text-align: left;">O identificador da linha da observação.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">col</td>
+<td style="text-align: left;">O identificador da coluna da observação.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">yield</td>
+<td style="text-align: left;">Peso dos frutos comercializáveis por parcela.</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Há quatro repetições de genótipos por localização, de forma que ambas localizações possuem o mesmo layout e aleatoriedade, tornando possivel a comparação.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="cucumber_genotype_latin_square_design_files/figure-html/desplot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Considerando o gráfico, percebe-se que o rendimento é maior no layout da localização de Clemson.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="cucumber_genotype_latin_square_design_files/figure-html/bosxplot-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Observando o boxplot é possivel perceber intuitivamente alguns fatos:</p>
+<ul>
+<li>Poinsett parece ser consistentemente o genótipo com menor produção, independente da localização;</li>
+<li>Desempenho superior do genótipo Dasher em ambas as localizações;</li>
+<li>A variação total é maior em Clemson para a maioria dos genótipos (Guardian em especial), sugerindo maior sensibilidade aos fatores ambientais;</li>
+<li>Em Tifton, os genótipos mostram distribuições mais concentradas.</li>
+</ul>
+</section>
+<section id="aplicação-da-anova-no-design-de-clensom" class="level2">
+<h2 class="anchored" data-anchor-id="aplicação-da-anova-no-design-de-clensom">Aplicação da Anova no design de Clensom</h2>
+<section id="analisando-pressupostos" class="level3">
+<h3 class="anchored" data-anchor-id="analisando-pressupostos">Analisando pressupostos</h3>
+</section>
+</section>
+<section id="aplicação-da-anova-no-design-de-tipton" class="level2">
+<h2 class="anchored" data-anchor-id="aplicação-da-anova-no-design-de-tipton">Aplicação da Anova no design de Tipton</h2>
+<section id="analisando-pressupostos-1" class="level3">
+<h3 class="anchored" data-anchor-id="analisando-pressupostos-1">Analisando pressupostos</h3>
+</section>
+</section>
+<section id="aplicação-da-anova-nos-dados-conjuntos" class="level2">
+<h2 class="anchored" data-anchor-id="aplicação-da-anova-nos-dados-conjuntos">Aplicação da Anova nos dados conjuntos</h2>
+<section id="analisando-pressupostos-2" class="level3">
+<h3 class="anchored" data-anchor-id="analisando-pressupostos-2">Analisando pressupostos</h3>
+</section>
+</section>
+<section id="conclusões" class="level2">
+<h2 class="anchored" data-anchor-id="conclusões">Conclusões</h2>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
